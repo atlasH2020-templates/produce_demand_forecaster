@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "procude_demand_forecast Service Template",
+    "title": "produce_demand_forecaster Service Template",
     "version": "0.0.1",
     "description": "Template for services that ..."
   },

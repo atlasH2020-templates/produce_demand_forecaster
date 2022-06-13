@@ -11,16 +11,16 @@
 
 <div class="header">
 ATLAS Service Template Specification
-Name                                      produce_demand_forecast
+Name                                    produce_demand_forecaster
 Version                                                     0.0.1
 Author(s)                                    P. de Lange (Calabi)
 </div>
 
-<h2>The "produce_demand_forecast" ATLAS Service Template</h2>
+<h2>The "produce_demand_forecaster" ATLAS Service Template</h2>
 <div style="margin-left: -22px;">
 Abstract
 
-This document describes the specifications for the produce_demand_forecast service whose purpose is to ....
+This document describes the specifications for the produce_demand_forecaster service whose purpose is to ....
 </div>
 <h2>1 Introduction</h2>
 
@@ -32,7 +32,7 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 The notation "[xxx]" (xxx in square brackets) is equivalent to "array of xxx".
 
-When used alone, the term "produce_demand_forecast" refers to "produce_demand_forecast ATLAS Service Template". Instead, "produce_demand_forecast service" is equivalent to "an ATLAS Service implementing the produce_demand_forecast ATLAS Service Template".
+When used alone, the term "produce_demand_forecaster" refers to "produce_demand_forecaster ATLAS Service Template". Instead, "produce_demand_forecaster service" is equivalent to "an ATLAS Service implementing the produce_demand_forecaster ATLAS Service Template".
 
 <h2>3 Pre-requisites</h2>
 
@@ -43,25 +43,25 @@ both service consumers or service provider implementors:
     - ISO8601 representation of dates and times
       (<a href="https://www.iso.org/iso-8601-date-and-time-format.html">https://www.iso.org/iso-8601-date-and-time-format.html</a>)
 </pre>
-<h2>4 produce_demand_forecast Usage Scenarios</h2>
+<h2>4 produce_demand_forecaster Usage Scenarios</h2>
 
-The following sections describe some aspects of the use of produce_demand_forecast. The examples were chosen to illustrate the basic operation of applications using produce_demand_forecast, not to limit what produce_demand_forecast may be used for.
+The following sections describe some aspects of the use of produce_demand_forecaster. The examples were chosen to illustrate the basic operation of applications using produce_demand_forecaster, not to limit what produce_demand_forecaster may be used for.
 
 <h2>4.1 Irrigation</h2>
 
-The aim is to optimize water usage based on several data sources from produce_demand_forecast. The irrigation decisions taken by a produce_demand_forecast service could use a produce_demand_forecast service to retrieve the historical data related to a specified region.
+The aim is to optimize water usage based on several data sources from produce_demand_forecaster. The irrigation decisions taken by a produce_demand_forecaster service could use a produce_demand_forecaster service to retrieve the historical data related to a specified region.
 
-When an irrigation prediction needs to be done, the produce_demand_forecast service would update the latest data concerning a boundary.
+When an irrigation prediction needs to be done, the produce_demand_forecaster service would update the latest data concerning a boundary.
 
 <h2>4.2 Disease forecasting</h2>
 
-Crop growers can benefit from a produce_demand_forecast service using the weather and the field data available on the produce_demand_forecast for a specific field boundaries.
+Crop growers can benefit from a produce_demand_forecaster service using the weather and the field data available on the produce_demand_forecaster for a specific field boundaries.
 
 A service could be implemented to build a risk map and determine if fungicides should be applied on the field, helping the farmer to control the possible diseases.
 
 <h2>4.3 Animal Monitoring</h2>
 
-produce_demand_forecast may be used to retrieve information from sensors located in a barn, to monitor the wellbeing of animals using information such as temperature, light, noise levels, etc.
+produce_demand_forecaster may be used to retrieve information from sensors located in a barn, to monitor the wellbeing of animals using information such as temperature, light, noise levels, etc.
 
 An animal monitoring system might combine such sensor data with behavioural analysis to alert farmers on unusual conditions.
 
@@ -85,7 +85,7 @@ Therefore, those three parameters should be provided in the request, as it is sh
 |     Outputs | Sensor data available        |
 +-------------+------------------------------+
 </pre>
-On the other hand, the capabilities endpoint contains all the parameters available for each produce_demand_forecast service implementor. It also contains the aggregations defined for each parameter.
+On the other hand, the capabilities endpoint contains all the parameters available for each produce_demand_forecaster service implementor. It also contains the aggregations defined for each parameter.
 
 A query to the capabilities endpoint returns an array of strings representing the parameters supported by the implementor, given the availability of physical sensors within the requested boundaries.
 <pre>
@@ -97,9 +97,9 @@ A query to the capabilities endpoint returns an array of strings representing th
 |     Outputs | Supported parameters         |
 +-------------+------------------------------+
 </pre>
-Please refer to the openAPI produce_demand_forecast specification for details about data schemas and formats returned by the capabilities endpoint, as well as to ANNEX 1 for a list of normalized measurements that may be offered by a produce_demand_forecast service.
+Please refer to the openAPI produce_demand_forecaster specification for details about data schemas and formats returned by the capabilities endpoint, as well as to ANNEX 1 for a list of normalized measurements that may be offered by a produce_demand_forecaster service.
 
-produce_demand_forecast services are not required to handle intense traffic from a single client, such as the one that may result from being directly invoked on user interface interactions in an FMIS, for instance. Implementors MAY generate a 429 TOO MANY REQUESTS error response if the rate of calls exceeds some pre-defined quota. Clients requiring more intense field information are advised to implement a mirroring mechanism using the subscription functions.
+produce_demand_forecaster services are not required to handle intense traffic from a single client, such as the one that may result from being directly invoked on user interface interactions in an FMIS, for instance. Implementors MAY generate a 429 TOO MANY REQUESTS error response if the rate of calls exceeds some pre-defined quota. Clients requiring more intense field information are advised to implement a mirroring mechanism using the subscription functions.
 
 <h2>5.1 Queries with no data available</h2>
 
@@ -113,19 +113,19 @@ Sometimes the requested time interval may be invalid according to the available 
 
 In all those cases an error would be returned to the request.
 
-To solve the most common requests, the next default time intervals should be covered by the produce_demand_forecast service implementor: 1 Hour, 1 day, 1 week, 1 month and their multiples.
+To solve the most common requests, the next default time intervals should be covered by the produce_demand_forecaster service implementor: 1 Hour, 1 day, 1 week, 1 month and their multiples.
 
 <h2>6 Access and Authentication</h2>
 
-Farmers MUST have an account setup on an produce_demand_forecast service in order to authenticate and access API endpoints. The service implementor is responsible for the creation of accounts; it is not covered in the service template specifications.
+Farmers MUST have an account setup on an produce_demand_forecaster service in order to authenticate and access API endpoints. The service implementor is responsible for the creation of accounts; it is not covered in the service template specifications.
 
 Unless specifically documented in the OpenAPI specifications, all API calls must include credentials in form of Bearer authentication (also called token authentication). Clients can obtain an access token on behalf of their user from the service's authorization server (see ATLAS service pairing).
 
 Some of the information held by advisor services may be considered sensitive from a GDPR perspective. The service's authorization server SHOULD request the client's end-user consent at service pairing time in order to deliver an access token.
 
-<h2>ANNEX 1 - produce_demand_forecast Measurement Types</h2>
+<h2>ANNEX 1 - produce_demand_forecaster Measurement Types</h2>
 
-The current list of standardized measurement parameters that may be returned by produce_demand_forecast services is listed below. Newer versions of the produce_demand_forecast template are likely to extend this list.
+The current list of standardized measurement parameters that may be returned by produce_demand_forecaster services is listed below. Newer versions of the produce_demand_forecaster template are likely to extend this list.
 <table>
 <tr><td>PARAMETER</td><td>UNIT</td><td>DESCRIPTION</td><td width="80">MANDATORY<br/>AGGREGATIONS</td></tr>
 <tr><td>ATMO__T</td><td>&#8451;</td><td>Atmospheric temperature</td><td>min, max, avg</td></tr>
