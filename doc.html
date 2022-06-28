@@ -10,7 +10,7 @@
 <body>
 
 <div class="header">
-Experimental ATLAS Service Template Specification
+ATLAS Service Template Specification
 Name                                    produce_demand_forecaster
 Version                                                     0.0.1
 Author(s)                                    P. de Lange (Calabi)
@@ -47,104 +47,79 @@ both service consumers or service provider implementors:
 
 The following sections describe some aspects of the use of produce_demand_forecaster. The examples were chosen to illustrate the basic operation of applications using produce_demand_forecaster, not to limit what produce_demand_forecaster may be used for.
 
-<h2>4.1 Irrigation</h2>
+<h2>4.1 Short supply chain producer</h2>
 
-The aim is to optimize water usage based on several data sources from produce_demand_forecaster. The irrigation decisions taken by a produce_demand_forecaster service could use a produce_demand_forecaster service to retrieve the historical data related to a specified region.
+The aim is to assist a short supply chain producer in making an informed cultivation
+plan. For a producer, the produce_demand_forecaster yields the top consumed produce in
+her area per time window. For a given time window, the produce_demand_forecaster yields
+the most popular produce measured by the community's demand so that the producer can
+plan to sow accordingly.
 
-When an irrigation prediction needs to be done, the produce_demand_forecaster service would update the latest data concerning a boundary.
+<h2>4.2 Short supply chain retailer</h2>
 
-<h2>4.2 Disease forecasting</h2>
-
-Crop growers can benefit from a produce_demand_forecaster service using the weather and the field data available on the produce_demand_forecaster for a specific field boundaries.
-
-A service could be implemented to build a risk map and determine if fungicides should be applied on the field, helping the farmer to control the possible diseases.
-
-<h2>4.3 Animal Monitoring</h2>
-
-produce_demand_forecaster may be used to retrieve information from sensors located in a barn, to monitor the wellbeing of animals using information such as temperature, light, noise levels, etc.
-
-An animal monitoring system might combine such sensor data with behavioural analysis to alert farmers on unusual conditions.
+The aim is to assist a short supply chain retailer in making an informed procurement
+planning and decision. For a retailer, the produce_demand_forecaster yields the top
+consumed produce in her area per time window. For a given time window, the
+produce_demand_forecaster yields the most popular produce measured by the community's
+demand so that the retailer can order accordingly.
 
 <h2>5 Service Template Structure</h2>
 
-The Service Template is divided into two endpoints. One to retrieve the data and another two show the available measurements (capabilities).
+The produce_demand_forecaster takes as input the time interval over which the demand
+forecast is to be given, as well as geographic input that is fiven in the form of a
+three-letter code that abbreviates a city. Currently, the codes (and cities) that are
+supported are AMS (Amsterdam), ANT (Antwerp), BER (Berlin) and LUX (Luxembourg). The
+available GEO codes can be found by making a request at the **geo** endpoint. This
+enpoint returns a list of all supported GEO codes with metadata that describes the value
+that the GEO code KEY encodes.
 
-The data endpoint is used to get the measures within a boundary region, provided in time series and during a time interval.
+The produce_demand_forecaster serves the forecast over the **forecast** endpoint.
 
-For each parameter with available data at the specified boundary, a time series per aggregation is returned. Note that null values may be returned as part of a time series when no measurements are available.
-
-Therefore, those three parameters should be provided in the request, as it is shown below:
 <pre>
 +--------------------------------------------+
-| data                                       |
+| forecast                                   |
 +-------------+------------------------------+
-|      Inputs | Boundary                     |
-|             | Time interval                |
-|             | Required parameters          |
+|      Inputs | Time interval                |
+|             | 3-letter GEO code            |
 +-------------+------------------------------+
-|     Outputs | Sensor data available        |
-+-------------+------------------------------+
-</pre>
-On the other hand, the capabilities endpoint contains all the parameters available for each produce_demand_forecaster service implementor. It also contains the aggregations defined for each parameter.
-
-A query to the capabilities endpoint returns an array of strings representing the parameters supported by the implementor, given the availability of physical sensors within the requested boundaries.
-<pre>
-+--------------------------------------------+
-| capabilities                               |
-+-------------+------------------------------+
-|      Inputs | Boundary                     |
-+-------------+------------------------------+
-|     Outputs | Supported parameters         |
+|     Outputs | array of top produce         |
+|             | (meta)data                   |
 +-------------+------------------------------+
 </pre>
-Please refer to the openAPI produce_demand_forecaster specification for details about data schemas and formats returned by the capabilities endpoint, as well as to ANNEX 1 for a list of normalized measurements that may be offered by a produce_demand_forecaster service.
 
-produce_demand_forecaster services are not required to handle intense traffic from a single client, such as the one that may result from being directly invoked on user interface interactions in an FMIS, for instance. Implementors MAY generate a 429 TOO MANY REQUESTS error response if the rate of calls exceeds some pre-defined quota. Clients requiring more intense field information are advised to implement a mirroring mechanism using the subscription functions.
+<h2>5.1 Invalid GEO code</h2>
 
-<h2>5.1 Queries with no data available</h2>
-
-It could happen that there is no data available for the requested parameters at the specified boundary and time interval. A common example for that could be that sensors for the requested parameters were never installed within the boundaries, or they were not online during the time interval.
-
-In those cases, an error message will be returned to the request.
+An error code 404 with an error message will be returned to the request.
 
 <h2>5.2 Invalid time interval</h2>
 
-Sometimes the requested time interval may be invalid according to the available sensor data. For example, if the time interval is 7 minutes and only time series of 1 hour are available.
-
-In all those cases an error would be returned to the request.
-
-To solve the most common requests, the next default time intervals should be covered by the produce_demand_forecaster service implementor: 1 Hour, 1 day, 1 week, 1 month and their multiples.
+An error code 400 with an error message will be returned to the request.
 
 <h2>6 Access and Authentication</h2>
 
-Farmers MUST have an account setup on an produce_demand_forecaster service in order to authenticate and access API endpoints. The service implementor is responsible for the creation of accounts; it is not covered in the service template specifications.
+The produce_demand_forecaster is publically available with rate limits.
 
-Unless specifically documented in the OpenAPI specifications, all API calls must include credentials in form of Bearer authentication (also called token authentication). Clients can obtain an access token on behalf of their user from the service's authorization server (see ATLAS service pairing).
+For less strict rate limits, producers and retailers and  MUST have an account setup on an produce_demand_forecaster service in order to authenticate and access API endpoints. 
 
-Some of the information held by advisor services may be considered sensitive from a GDPR perspective. The service's authorization server SHOULD request the client's end-user consent at service pairing time in order to deliver an access token.
+To obtain credentials that give access to the endpoints, reach out to the Calabi staff
+at info@calabi.be.
 
-<h2>ANNEX 1 - produce_demand_forecaster Measurement Types</h2>
+Unless specifically documented in the OpenAPI specifications, all API calls must include
+credentials in form of Bearer authentication (also called token authentication). Clients
+can obtain an access token on behalf of their user from the service's authorization
+server (see ATLAS service pairing).
 
-The current list of standardized measurement parameters that may be returned by produce_demand_forecaster services is listed below. Newer versions of the produce_demand_forecaster template are likely to extend this list.
+<h2>ANNEX 1 - produce_demand_forecaster GEO codes</h2>
+
+The current list of supported GEO codes. The list is often updated, and the most recent
+list van always be obtained by performing a GET request against the **geo** endpoint.
 <table>
-<tr><td>PARAMETER</td><td>UNIT</td><td>DESCRIPTION</td><td width="80">MANDATORY<br/>AGGREGATIONS</td></tr>
-<tr><td>ATMO__T</td><td>&#8451;</td><td>Atmospheric temperature</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__RH</td><td>%</td><td>Atmospheric relative humidity</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__P</td><td>hPa</td><td>Atmospheric pressure</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__WIND_SPEED</td><td>m/s</td><td>Wind speed</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__IRRADIATION</td><td>W/m<sup>2</sup></td><td>Solar irradiation</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__SSR</td><td>W/m<sup>2</sup></td><td>Surface Solar Radiation (incoming solar radiation on soil surface)</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__WIND_GUSTINESS</td><td>m/s<sup>2</sup></td><td>Wind gusts</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__RAINFLOW</td><td>mm/h</td><td>Precipitation intensity</td><td>min, max, avg</td></tr>
-<tr><td>ATMO__RAINFALL</td><td>mm</td><td>Accumulated precipitation</td><td>sum</td></tr>
-<tr><td>SOIL__VMC</td><td>%</td><td>Soil volumetric moisture content</td><td>min, max, avg</td></tr>
-<tr><td>SOIL__T</td><td>&#8451;</td><td>Soil temperature</td><td>min, max, avg</td></tr>
-<tr><td>SOIL__WETNESS</td><td>%</td><td>Soil wetness index (free water on soil surface)</td><td>min, max, avg</td></tr>
-<tr><td>CANOPY__WETNESS</td><td>%</td><td>Canopy wetness index (free water on sensor surface)</td><td>min, max, avg</td></tr>
+<tr><td>3-LETTER GEO CODE</td><td>CITY</td><td>COUNTRY</td>
+<tr><td>ANT</td><td>Antwerp</td><td>Belgium</td></tr>
+<tr><td>AMS</td><td>Amsterdam</td><td>Netherlands</td></tr>
+<tr><td>BER</td><td>BERLIN</td><td>Berlin</td></tr>
+<tr><td>LUX</td><td>Luxembourg</td><td>Luxembourg</td></tr>
 </table>
-
-It should be taken into account that some parameters could represent a measurement at any height, due to some uncontrolled offset on the location descriptor.
-
 
 </body>
 </html>
