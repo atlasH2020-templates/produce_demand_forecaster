@@ -10,7 +10,7 @@
 <body>
 
 <div class="header">
-ATLAS Service Template Specification
+Experimental ATLAS Service Template Specification
 Name                                    produce_demand_forecaster
 Version                                                     0.0.1
 Author(s)                                    P. de Lange (Calabi)
@@ -49,29 +49,15 @@ The following sections describe some aspects of the use of produce_demand_foreca
 
 <h2>4.1 Short supply chain producer</h2>
 
-The aim is to assist a short supply chain producer in making an informed cultivation
-plan. For a producer, the produce_demand_forecaster yields the top consumed produce in
-her area per time window. For a given time window, the produce_demand_forecaster yields
-the most popular produce measured by the community's demand so that the producer can
-plan to sow accordingly.
+The aim is to assist a short supply chain producer in making an informed cultivation plan. For a producer, the produce_demand_forecaster yields the top consumed produce in her area per time window. For a given time window, the produce_demand_forecaster yields the most popular produce measured by the community's demand so that the producer can plan to sow accordingly.
 
 <h2>4.2 Short supply chain retailer</h2>
 
-The aim is to assist a short supply chain retailer in making an informed procurement
-planning and decision. For a retailer, the produce_demand_forecaster yields the top
-consumed produce in her area per time window. For a given time window, the
-produce_demand_forecaster yields the most popular produce measured by the community's
-demand so that the retailer can order accordingly.
+The aim is to assist a short supply chain retailer in making an informed procurement planning and decision. For a retailer, the produce_demand_forecaster yields the top consumed produce in her area per time window. For a given time window, the produce_demand_forecaster yields the most popular produce measured by the community's demand so that the retailer can order accordingly.
 
 <h2>5 Service Template Structure</h2>
 
-The produce_demand_forecaster takes as input the time interval over which the demand
-forecast is to be given, as well as geographic input that is fiven in the form of a
-three-letter code that abbreviates a city. Currently, the codes (and cities) that are
-supported are AMS (Amsterdam), ANT (Antwerp), BER (Berlin) and LUX (Luxembourg). The
-available GEO codes can be found by making a request at the **geo** endpoint. This
-enpoint returns a list of all supported GEO codes with metadata that describes the value
-that the GEO code KEY encodes.
+The produce_demand_forecaster takes as input the time interval over which the demand forecast is to be given, as well as geographic input that is fiven in the form of a three-letter code that abbreviates a city. Currently, the codes (and cities) that are supported are AMS (Amsterdam), ANT (Antwerp), BER (Berlin) and LUX (Luxembourg). The available GEO codes can be found by making a request at the **geo** endpoint. This enpoint returns a list of all supported GEO codes with metadata that describes the value that the GEO code KEY encodes.
 
 The produce_demand_forecaster serves the forecast over the **forecast** endpoint.
 
@@ -87,38 +73,24 @@ The produce_demand_forecaster serves the forecast over the **forecast** endpoint
 +-------------+------------------------------+
 </pre>
 
-<h2>5.1 Invalid GEO code</h2>
-
-An error code 404 with an error message will be returned to the request.
-
-<h2>5.2 Invalid time interval</h2>
-
-An error code 400 with an error message will be returned to the request.
-
 <h2>6 Access and Authentication</h2>
 
-The produce_demand_forecaster is publically available with rate limits.
+Farmers MUST have an account setup on an produce_demand_forecaster service in order to authenticate and access API endpoints. The service implementor is responsible for the creation of accounts; it is not covered in the service template specifications.
 
-For less strict rate limits, producers and retailers and  MUST have an account setup on an produce_demand_forecaster service in order to authenticate and access API endpoints. 
+Unless specifically documented in the OpenAPI specifications, all API calls must include credentials in form of Bearer authentication (also called token authentication). Clients can obtain an access token on behalf of their user from the service's authorization server (see ATLAS service pairing).
 
-To obtain credentials that give access to the endpoints, reach out to the Calabi staff
-at info@calabi.be.
-
-Unless specifically documented in the OpenAPI specifications, all API calls must include
-credentials in form of Bearer authentication (also called token authentication). Clients
-can obtain an access token on behalf of their user from the service's authorization
-server (see ATLAS service pairing).
+Some of the information held by advisor services may be considered sensitive from a GDPR perspective. The service's authorization server SHOULD request the client's end-user consent at service pairing time in order to deliver an access token.
 
 <h2>ANNEX 1 - produce_demand_forecaster GEO codes</h2>
 
-The current list of supported GEO codes. The list is often updated, and the most recent
-list van always be obtained by performing a GET request against the **geo** endpoint.
+The current list of supported GEO codes. The codes map to cities in Europe and are
+formed by taking the European alpha-2 abbreviation of the country (https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes), followed by a column and then the first three letters of the city (XX:XXX, e.g. BE:BRU for Brussels). The list is often updated, and the most recent list van always be obtained by performing a GET request against the **geo** endpoint.
 <table>
 <tr><td>3-LETTER GEO CODE</td><td>CITY</td><td>COUNTRY</td>
-<tr><td>ANT</td><td>Antwerp</td><td>Belgium</td></tr>
-<tr><td>AMS</td><td>Amsterdam</td><td>Netherlands</td></tr>
-<tr><td>BER</td><td>BERLIN</td><td>Berlin</td></tr>
-<tr><td>LUX</td><td>Luxembourg</td><td>Luxembourg</td></tr>
+<tr><td>BE:ANT</td><td>Antwerp</td><td>Belgium</td></tr>
+<tr><td>NL:AMS</td><td>Amsterdam</td><td>Netherlands</td></tr>
+<tr><td>DE:BER</td><td>BERLIN</td><td>Berlin</td></tr>
+<tr><td>LU:LUX</td><td>Luxembourg</td><td>Luxembourg</td></tr>
 </table>
 
 </body>
