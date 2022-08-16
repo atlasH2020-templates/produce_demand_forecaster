@@ -3,19 +3,20 @@
   "info": {
     "title": "Experimental produce_demand_forecaster Service Template",
     "version": "0.0.1",
-    "description": "Template for services that ..."
+    "description": "Template for services that provides demand forecasting data for
+    producers and merchants on the short supply chain."
   },
   "tags": [
     {
-      "name": "Parameters"
+      "name": "Forecast"
     },
     {
-      "name": "Capabilities"
+      "name": "Time-series"
     }
   ],
   "paths": {
-    "/data": {
-      "post": {
+    "/geo": {
+      "get": {
         "security": [
           {
             "bearerAuth": []
@@ -24,217 +25,34 @@
         "tags": [
           "Parameters"
         ],
-        "summary": "Gets the measured time series within the boundary region and during the time frame",
-        "description": "Retrieves the timeseries inside of the Boundary during the specified time frame, for each source location strictly contained therein. For each parameter with data at a given location, a time series per aggregation is returned. The defined aggregations for a parameter are discoverable by querying the \"capabilities\" endpoint. A time series can contain null as a value.",
-        "requestBody": {
-          "description": "Specifies the temporal and spatial boundary for the required data.",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "description": "Request body format for the data query.",
-                "type": "object",
-                "required": [
-                  "boundary",
-                  "from",
-                  "to",
-                  "parameters"
-                ],
-                "properties": {
-                  "boundary": {
-                    "$ref": "#/components/schemas/Boundary"
-                  },
-                  "from": {
-                    "$ref": "#/components/schemas/Timestamp"
-                  },
-                  "to": {
-                    "$ref": "#/components/schemas/Timestamp"
-                  },
-                  "parameters": {
-                    "description": "The requested physical quantities . The list of parameters available at a location can be discovered with a query to the \"capabilities\" endpoint",
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "required": [
-                        "key"
-                      ],
-                      "properties": {
-                        "key": {
-                          "$ref": "#/components/schemas/ParameterTypes",
-                          "example": "ATMO__T"
-                        },
-                        "aggregations": {
-                          "description": "Requested aggregations for this parameter key. Empty array or missing array means to send all available aggregations",
-                          "type": "array",
-                          "example": [
-                            "min",
-                            "avg"
-                          ],
-                          "items": {
-                            "$ref": "#/components/schemas/AggregationTypes"
-                          }
-                        }
-                      },
-                      "example": [
-                        {
-                          "key": "ATMO__T"
-                        },
-                        {
-                          "key": "ATMO__RH",
-                          "aggregations": [
-                            "min",
-                            "avg"
-                          ]
-                        }
-                      ]
-                    }
-                  },
-                  "timeWindow": {
-                    "$ref": "#/components/schemas/TimeWindow"
-                  }
-                }
-              }
-            }
-          }
-        },
+        "summary": "Gets the supported GEO codes for which demand forecast data
+        is available",
+        "description": "Retrieves an object, the keys of which are the supported GEO
+        codes. The values are objects with metadata that describe the geographic
+        object.",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "description": "The requested timeseries, organized as parallel arrays. The timestamps array is at root level, the data arrays are divided in the \"data\" branches. Each branch is relative to a different source location. Data series can contain null as a value.",
-                  "required": [
-                    "timeWindow",
-                    "timestamps",
-                    "data"
-                  ],
-                  "type": "object",
-                  "properties": {
-                    "timeWindow": {
-                      "$ref": "#/components/schemas/TimeWindow"
-                    },
-                    "timestamps": {
-                      "description": "The series of ISO8601 datetimes associated with all the parallel data arrays in the payload for each location.",
-                      "type": "array",
-                      "items": {
-                        "format": "date-time",
+                  "description": "The suported geo codes and their metadata.",
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "description": "The abbreviation code for the location for
+                        which to yield the demand forecast.",
                         "type": "string"
                       },
-                      "example": [
-                        "2021-05-12T20:00:00Z",
-                        "2021-05-13T20:00:00Z",
-                        "2021-05-14T20:00:00Z"
-                      ]
-                    },
-                    "data": {
-                      "example": [
-                        {
-                          "location": {
-                            "type": "Point",
-                            "coordinates": [
-                              12.554,
-                              43.43234,
-                              2
-                            ]
-                          },
-                          "ATMO__RAINFALL": {
-                            "total": [
-                              0,
-                              3,
-                              2
-                            ]
-                          },
-                          "ATMO__RAINFLOW": {
-                            "min": [
-                              0,
-                              1,
-                              1
-                            ],
-                            "max": [
-                              0,
-                              4,
-                              3
-                            ],
-                            "avg": [
-                              0,
-                              2,
-                              2
-                            ],
-                            "total": [
-                              0,
-                              3,
-                              2
-                            ]
-                          }
-                        },
-                        {
-                          "location": {
-                            "type": "Point",
-                            "coordinates": [
-                              12.554,
-                              43.43234,
-                              0
-                            ]
-                          },
-                          "SOIL__T": {
-                            "min": [
-                              8,
-                              null,
-                              6.7
-                            ],
-                            "max": [
-                              9,
-                              null,
-                              7.3
-                            ],
-                            "avg": [
-                              8.5,
-                              null,
-                              7
-                            ]
-                          }
-                        }
-                      ],
-                      "description": "Collection of data timeseries for each location within the requested Boundary. Every returned array has the same lenght of the timestamps array and can contain null elements.",
-                      "type": "array",
-                      "items": {
-                        "description": "Data series for a single location, organized as parallel arrays.",
-                        "type": "object",
-                        "required": [
-                          "location"
-                        ],
-                        "minProperties": 2,
-                        "properties": {
-                          "location": {
-                            "description": "A geographical location expressed as a GeoJSON of type point, with the optional third component used to express displacement with respect to soil level rather than altitude, with meter as unit. See https://json.schemastore.org/geojson.json",
-                            "type": "object",
-                            "required": [
-                              "type",
-                              "coordinates"
-                            ],
-                            "properties": {
-                              "type": {
-                                "pattern": "^Point$",
-                                "type": "string"
-                              },
-                              "coordinates": {
-                                "description": "See https://json.schemastore.org/geojson.json"
-                              }
-                            },
-                            "example": {
-                              "type": "Point",
-                              "coordinates": [
-                                12.554,
-                                43.43234,
-                                2
-                              ]
-                            }
-                          }
-                        },
-                        "additionalProperties": {
-                          "$ref": "#/components/schemas/Parameters"
-                        }
+                      "country": {
+                        "description": "Country of the location.",
+                        "type": "string"
+                      },
+                      "city": {
+                        "description": "Name of the city of the location.",
+                        "type": "string"
                       }
                     }
                   }
@@ -242,28 +60,8 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid or missing parameters. Also returned when fullfilling the request would transfer too much data (up to the implementor). The content SHOULD specify the reason as a json string.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
           "401": {
             "description": "Invalid or missing credentials",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "No accessible sensors have ever been placed within the Boundary.",
             "content": {
               "application/json": {
                 "schema": {
@@ -285,7 +83,7 @@
         }
       }
     },
-    "/capabilities": {
+    "/forecast": {
       "get": {
         "security": [
           {
@@ -295,15 +93,68 @@
         "tags": [
           "Capabilities"
         ],
-        "summary": "Parameters exposed by the implementor",
+        "parameters": [
+          {
+            "name": "geo",
+            "in": "path",
+            "type": "string",
+            "required": "true",
+            "description": "the geographic id of the city a demand forecast is queried"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "type": "string",
+            "required": "true",
+            "description": "the from date, first day of the forecasting window."
+          },
+          {
+            "name": "until",
+            "in": "query",
+            "type": "string",
+            "required": "true"
+          },
+          {
+            "name": "product",
+            "in": "query",
+            "type": "string",
+            "required": "true"
+          }
+        ],
+        "summary": "Forecast",
         "description": "Retrieves the list of parameters supported by the implementor of this service. Request for parameters outside of the response list will never produce data.",
+        "requestBody": {
+          "description": "",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "Request body format for the data query.",
+                "type": "object",
+                "required": [
+                  "from",
+                  "to",
+                ],
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/Timestamp"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/Timestamp"
+                  }
+                }
+              }
+            }
+          }
+        },
+
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
                 "schema": {
-                  "description": "An array of strings representing the parameters supported by the implementor to query in the \"data\" endpoint.",
+                  "description": "",
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/ParameterTypes"
@@ -351,55 +202,6 @@
       }
     },
     "schemas": {
-      "ParameterTypes": {
-        "type": "string",
-        "enum": [
-          "ATMO__T",
-          "ATMO__RH",
-          "ATMO__P",
-          "ATMO__WIND_SPEED",
-          "ATMO__IRRADIATION",
-          "ATMO__SSR",
-          "ATMO__WIND_GUSTINESS",
-          "ATMO__RAINFLOW",
-          "ATMO__RAINFALL",
-          "SOIL__VMC",
-          "SOIL__T",
-          "CANOPY__WETNESS",
-          "SOIL__WETNESS"
-        ]
-      },
-      "AggregationTypes": {
-        "type": "string",
-        "enum": [
-          "min",
-          "max",
-          "avg",
-          "sum"
-        ]
-      },
-      "DataSeriesType": {
-        "description": "A data series of nullable decimal numbers.",
-        "example": [
-          -12.4,
-          null,
-          4,
-          5.6
-        ],
-        "type": "array",
-        "items": {
-          "anyOf": [
-            {
-              "type": "number"
-            },
-            {
-              "enum": [
-                null
-              ]
-            }
-          ]
-        }
-      },
       "Parameters": {
         "description": "Aggregated time series for a parameter at a given location, contained in a 'data' branch of a response.",
         "type": "object",
@@ -424,56 +226,6 @@
         "format": "date-time",
         "description": "ISO8601 encoded date time - inclusive as left bound and exclusive as right bound.",
         "example": "2021-09-28T01:00:00.000Z"
-      },
-      "TimeWindow": {
-        "description": "Allowed time window sizes. A time window is the distance in time between one data point and the next (possibly null valued) in the time series. ISO8601 encoded.",
-        "type": "string",
-        "format": "duration",
-        "example": "P1H"
-      },
-      "Boundary": {
-        "description": "A geographical area expressed as a GeoJSON of type polygon to filter which sources of data must participate in the response to the query. See https://json.schemastore.org/geojson.json",
-        "type": "object",
-        "required": [
-          "type",
-          "coordinates"
-        ],
-        "properties": {
-          "type": {
-            "pattern": "^Polygon$",
-            "type": "string"
-          },
-          "coordinates": {
-            "description": "See https://json.schemastore.org/geojson.json"
-          }
-        },
-        "example": {
-          "type": "Polygon",
-          "coordinates": [
-            [
-              [
-                11.029761135578156,
-                49.57058013297548
-              ],
-              [
-                11.030300259590149,
-                49.57058013297548
-              ],
-              [
-                11.030300259590149,
-                49.57087931601995
-              ],
-              [
-                11.029761135578156,
-                49.57087931601995
-              ],
-              [
-                11.029761135578156,
-                49.57058013297548
-              ]
-            ]
-          ]
-        }
       },
       "Error": {
         "description": "This defines the structure of an error payload when one is present. Actual messages and additional error information content may change from one implementation to another",
