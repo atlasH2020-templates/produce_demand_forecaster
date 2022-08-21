@@ -53,6 +53,11 @@
                       "city": {
                         "description": "Name of the city of the location.",
                         "type": "string"
+                      },
+                      "geojson": {
+                        "description": "The polygon in geojson format describing the
+                        city. Will always be a single polygon.",
+                        "type": "array"
                       }
                     }
                   }
@@ -91,7 +96,7 @@
           }
         ],
         "tags": [
-          "Capabilities"
+          "Forecast"
         ],
         "parameters": [
           {
@@ -99,72 +104,50 @@
             "in": "path",
             "type": "string",
             "required": "true",
-            "description": "the geographic id of the city a demand forecast is queried"
+            "description": "The geographic id of the city a demand forecast is queried"
           },
           {
             "name": "from",
             "in": "query",
             "type": "string",
             "required": "true",
-            "description": "the from date, first day of the forecasting window."
+            "description": "The from date: first day of the forecasting window."
           },
           {
             "name": "until",
             "in": "query",
             "type": "string",
-            "required": "true"
+            "required": "true",
+            "description": "The until date: final day of the forecasting window."
           },
           {
             "name": "product",
             "in": "query",
             "type": "string",
-            "required": "true"
+            "required": "true",
+            "description": "the product that is queried"
           }
         ],
         "summary": "Forecast",
-        "description": "Retrieves the list of parameters supported by the implementor of this service. Request for parameters outside of the response list will never produce data.",
-        "requestBody": {
-          "description": "",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "description": "Request body format for the data query.",
-                "type": "object",
-                "required": [
-                  "from",
-                  "to",
-                ],
-                "properties": {
-                  "from": {
-                    "$ref": "#/components/schemas/Timestamp"
-                  },
-                  "to": {
-                    "$ref": "#/components/schemas/Timestamp"
-                  }
-                }
-              }
-            }
-          }
-        },
-
+        "description": "Retrieves the forecasted demand of the queried product in the
+        queried geographic area in the queried timewindow.",
         "responses": {
           "200": {
             "description": "Success",
             "content": {
               "application/json": {
-                "schema": {
-                  "description": "",
+                "array": {
+                  "description": "Array of forecast points, where the array is bounded
+                  by the queried dates",
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ParameterTypes"
+                    "$ref": "#/components/schemas/ForecastPoint"
                   },
-                  "example": [
-                    "ATMO__T",
-                    "SOIL__T",
-                    "ATMO__RAINFLOW",
-                    "ATMO__RAINFALL"
-                  ]
+                  "example": {
+                    "date": "2021-09-28T00:00:00.000Z",
+                    "demand": 1.02,
+                    "margin": 0.20
+                  }
                 }
               }
             }
@@ -202,22 +185,22 @@
       }
     },
     "schemas": {
-      "Parameters": {
-        "description": "Aggregated time series for a parameter at a given location, contained in a 'data' branch of a response.",
+      "ForecastPoint": {
+        "description": "Single forecast point of a future time series",
         "type": "object",
-        "minProperties": 1,
         "properties": {
-          "min": {
-            "$ref": "#/components/schemas/DataSeriesType"
+          "date": {
+            "$ref": "#/components/schemas/TimeStamp"
           },
-          "max": {
-            "$ref": "#/components/schemas/DataSeriesType"
+          "demand": {
+            "type": "number",
+            "description": "The projected best estimate for the demand",
+            "example": 1.01
           },
-          "avg": {
-            "$ref": "#/components/schemas/DataSeriesType"
-          },
-          "sum": {
-            "$ref": "#/components/schemas/DataSeriesType"
+          "margin": {
+            "type": "number"
+            "description": "The one-sigma margin of error of the projected demand",
+            "example": 0.14
           }
         }
       },
