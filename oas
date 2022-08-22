@@ -145,7 +145,7 @@
                   },
                   "example": {
                     "date": "2021-09-28T00:00:00.000Z",
-                    "demand": 1.02,
+                    "value": 1.02,
                     "margin": 0.20
                   }
                 }
@@ -192,7 +192,7 @@
           "date": {
             "$ref": "#/components/schemas/TimeStamp"
           },
-          "demand": {
+          "value": {
             "type": "number",
             "description": "The projected best estimate for the demand",
             "example": 1.01
