@@ -57,7 +57,8 @@
                       "geojson": {
                         "description": "The polygon in geojson format describing the
                         city. Will always be a single polygon.",
-                        "type": "array"
+                        "type": "array",
+                        "items": {"type": "string"}
                       }
                     }
                   }
@@ -88,7 +89,7 @@
         }
       }
     },
-    "/forecast": {
+    "/forecast/{geoId}": {
       "get": {
         "security": [
           {
@@ -100,31 +101,35 @@
         ],
         "parameters": [
           {
-            "name": "geo",
+            "name": "geoId",
             "in": "path",
-            "type": "string",
-            "required": "true",
+            "schema":
+            {"type": "string"},
+            "required": true,
             "description": "The geographic id of the city a demand forecast is queried"
           },
           {
             "name": "from",
             "in": "query",
-            "type": "string",
-            "required": "true",
+            "schema":
+            {"type": "string"},
+            "required": true,
             "description": "The from date: first day of the forecasting window."
           },
           {
             "name": "until",
             "in": "query",
-            "type": "string",
-            "required": "true",
+            "schema":
+            {"type": "string"},
+            "required": true,
             "description": "The until date: final day of the forecasting window."
           },
           {
             "name": "product",
             "in": "query",
-            "type": "string",
-            "required": "true",
+            "schema":
+            {"type": "string"},
+            "required": true,
             "description": "the product that is queried"
           }
         ],
@@ -136,7 +141,7 @@
             "description": "Success",
             "content": {
               "application/json": {
-                "array": {
+                "schema": {
                   "description": "Array of forecast points, where the array is bounded
                   by the queried dates",
                   "type": "array",
@@ -190,7 +195,7 @@
         "type": "object",
         "properties": {
           "date": {
-            "$ref": "#/components/schemas/TimeStamp"
+            "$ref": "#/components/schemas/Timestamp"
           },
           "value": {
             "type": "number",
@@ -198,7 +203,7 @@
             "example": 1.01
           },
           "margin": {
-            "type": "number"
+            "type": "number",
             "description": "The one-sigma margin of error of the projected demand",
             "example": 0.14
           }
@@ -239,3 +244,4 @@
     }
   }
 }
+
