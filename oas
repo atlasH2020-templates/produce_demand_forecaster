@@ -127,10 +127,10 @@
           {
             "name": "product",
             "in": "query",
-            "schema":
-            {"type": "string"},
+            "schema": 
+            {"$ref": "#/components/schemas/Product"},
             "required": true,
-            "description": "the product that is queried"
+            "description": "the code of the product that is queried"
           }
         ],
         "summary": "Forecast",
@@ -199,7 +199,11 @@
           },
           "value": {
             "type": "number",
-            "description": "The projected best estimate for the demand",
+            "description": "The projected best estimate for the demand, on a scale from
+            0.00 to 100.00. The value is renormalized so that 50.00 is the moving
+            integrated historic average and 10.00 represents one standard deviation over
+            the historic set. This way a value of 70.00 means a value that is two standard
+            deviations higher than the total historic average.",
             "example": 1.01
           },
           "margin": {
@@ -214,6 +218,10 @@
         "format": "date-time",
         "description": "ISO8601 encoded date time - inclusive as left bound and exclusive as right bound.",
         "example": "2021-09-28T01:00:00.000Z"
+      },
+      "Product":{
+        "type": "string",
+        "enum": ["TOMATO-001"]
       },
       "Error": {
         "description": "This defines the structure of an error payload when one is present. Actual messages and additional error information content may change from one implementation to another",
